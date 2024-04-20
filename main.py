@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from database import create_engine_and_session
 from ingest_data import insert_node, insert_air_quality_data
 
@@ -8,6 +9,13 @@ app = FastAPI()
 # Create engine and session
 session = create_engine_and_session()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow requests from all origins
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
 # API endpoints
 @app.post("/nodes/")
 def create_node(request: Request):
