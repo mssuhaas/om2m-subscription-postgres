@@ -1,34 +1,27 @@
-# from fastapi import FastAPI, HTTPException
-# from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, Request
 from database import create_engine_and_session
 from ingest_data import insert_node, insert_air_quality_data
 
 # Define FastAPI app
-# app = FastAPI()
-
-# Pydantic models for request bodies
-# class NodeCreate(BaseModel):
-#     node_name: str
-#     longitude: float
-#     latitude: float
-
-# class AirQualityDataCreate(BaseModel):
-#     node_id: int
-#     timestamp: int
-#     temperature: float
-#     humidity: float
-#     air_quality: float
+app = FastAPI()
 
 # Create engine and session
 session = create_engine_and_session()
 
 # API endpoints
-# @app.post("/nodes/")
-# def create_node(node_data: NodeCreate):
-#     insert_node(session, node_data.node_name, node_data.longitude, node_data.latitude)
-#     return {"message": "Node created successfully"}
+@app.post("/nodes/")
+def create_node(request: Request):
+    node_data = request.body()
+    print(f"Received node data: {node_data.decode()}")
+    # Process and insert node data
+    # insert_node(session, ...)
+    return {"message": "Node created successfully"}
 
-# @app.post("/air_quality_data/")
-# def create_air_quality_data(data: AirQualityDataCreate):
-#     insert_air_quality_data(session, data.node_id, data.timestamp, data.temperature, data.humidity, data.air_quality)
-#     return {"message": "Air quality data inserted successfully"}
+@app.post("/air_quality_data/{node_name}")
+def create_air_quality_data(node_name: str, request: Request):
+    air_quality_data = request.body()
+    print(f"Received air quality data for node {node_name}: {air_quality_data.decode()}")
+    # Process and insert air quality data
+    # insert_air_quality_data(session, ...)
+    return {"message": "Air quality data received"}
+
